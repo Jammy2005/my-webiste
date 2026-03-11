@@ -193,7 +193,7 @@ Note: several agent modules contain inline demo code that streams a sample query
 
 ## 8. End-to-End Flow
 
-### 8.1 User → Frontend → Backend
+## 8.1 User → Frontend → Backend
 
 1. **User opens the app**
    - Browser loads `dpsk_bot.html` from `GET /`.
@@ -217,7 +217,7 @@ Note: several agent modules contain inline demo code that streams a sample query
        ```
    - These requests are fired in parallel so all three agents respond concurrently.
 
-### 8.2 Backend streaming flow
+## 8.2 Backend streaming flow
 
 4. **FastAPI route `chat_stream` handles the request**
    - Deserializes `QueryRequest` (Pydantic model).
@@ -245,7 +245,7 @@ Note: several agent modules contain inline demo code that streams a sample query
    - If no text was returned, the panel shows “No response.”
    - If any network or server error occurs, the user sees a small red error message and the badge goes to “Error.”
 
-### 8.3 Data layer flow (per agent type)
+## 8.3 Data layer flow (per agent type)
 
 - **DB agent**
   - LangChain SQL tools issue T-SQL queries over pyodbc to the `PRODUCT_DB`.

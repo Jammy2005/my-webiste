@@ -1,4 +1,4 @@
-## Project Dossier: Ambient Email Agent
+# Project Dossier: Ambient Email Agent
 
 ## 1. One-Sentence Summary
 
@@ -332,4 +332,3 @@ On the integration side, Google Calendar scheduling is done via the v3 API using
   "confidence": "High confidence in core architecture, features, and stack based on source files; medium to low confidence about production deployment details and long-term memory integration."
 }
 ```
-
