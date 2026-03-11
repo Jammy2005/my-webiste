@@ -18,7 +18,7 @@ class MessagesState(TypedDict):
 
 # IDENTIFY THE MODEL
 model = init_chat_model(
-    "gpt-4o",
+    "claude-sonnet-4-6",
     temperature=0
 )
 
@@ -63,25 +63,25 @@ agent_builder.add_edge("llm_call", END)
 agent = agent_builder.compile()
 
 
-messages = [HumanMessage(content="what is 12 + 4?")]
+# messages = [HumanMessage(content="what is 12 + 4?")]
 
-# messages = agent.invoke({"messages": messages})
-# for m in messages["messages"]:
-#     m.pretty_print()
+# # messages = agent.invoke({"messages": messages})
+# # for m in messages["messages"]:
+# #     m.pretty_print()
 
-for message_chunk, metadata in agent.stream(
-    {"messages": messages},
-    stream_mode="messages",  
-):
-    # print((agent["messages"]))
-    # print(type(message_chunk))
-    # print((message_chunk.usage_metadata))
-    # print()
-    # if message_chunk.content:
-    #     print(message_chunk.content, end="", flush=True)
-    # if message_chunk.usage_metadata is not None:
-    #     total_tokens = message_chunk.usage_metadata["total_tokens"]
+# for message_chunk, metadata in agent.stream(
+#     {"messages": messages},
+#     stream_mode="messages",  
+# ):
+#     # print((agent["messages"]))
+#     # print(type(message_chunk))
+#     # print((message_chunk.usage_metadata))
+#     # print()
+#     # if message_chunk.content:
+#     #     print(message_chunk.content, end="", flush=True)
+#     # if message_chunk.usage_metadata is not None:
+#     #     total_tokens = message_chunk.usage_metadata["total_tokens"]
     
-    # print("total number of tokens used ", total_tokens)
+#     # print("total number of tokens used ", total_tokens)
 
-    print (metadata)
+#     print (metadata)
