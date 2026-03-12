@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from my_agent.agent import agent
+from fastapi.responses import FileResponse
 
 app = FastAPI()
 
@@ -20,11 +21,15 @@ class MessageRequest(BaseModel):
 
 # Root route
 @app.get("/")
-async def root():
-    return {"status": "API running"}
+async def serve_frontend():
+    return FileResponse("index.html")
+
 
 
 @app.post("/chat")
 async def chat(req: MessageRequest):
-    response = agent.invoke({"messages":req.message})
+    verbose_response = agent.invoke({"messages": [("user", req.message)]})
+    print((verbose_response))
+    print(verbose_response["messages"][-1].content)
+    response = verbose_response["messages"][-1].content
     return {"response": f"ChatBot: {response}"}

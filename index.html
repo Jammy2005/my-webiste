@@ -5,18 +5,52 @@
 </head>
 <body>
 
-<h2>Minimal Chat</h2>
+<h2>Minimal Chatbot</h2>
+
+<div id="chatBox"></div>
 
 <input id="messageInput" placeholder="Type a message" />
-<button onclick="sendMessage()">Send</button>
+<button onclick="sendAndDisplay()">Send</button>
 
-<p id="response"></p>
+<p id="response" style="display:none;"></p>
 
 <script>
-async function sendMessage() {
-    const message = document.getElementById("messageInput").value;
+async function sendAndDisplay() {
+    // this function intakes the message the user sent, displays it, then gets he response and displays it
 
-    const res = await fetch("http://localhost:8000/chat", {
+
+    const messageInput = document.getElementById("messageInput");
+    const message = messageInput.value;
+    const chatBox = document.getElementById("chatBox");
+
+    const userMessage = document.createElement("p");
+    userMessage.innerText = "You: " + message;
+    chatBox.appendChild(userMessage);
+
+    console.log("We just wrote the user messge to the screen, we are now going into send message")
+
+    await sendMessage();
+
+    console.log("after sendMessage ends")
+
+
+    const botReplyText = document.getElementById("response").innerText;
+
+    const botMessage = document.createElement("p");
+    botMessage.innerText = botReplyText;
+    chatBox.appendChild(botMessage);
+
+    messageInput.value = "";
+}
+
+async function sendMessage() {
+    // this function call the backend api and gets the result a
+
+     console.log("before send message starts")
+
+    const message = document.getElementById("messageInput").value; // get user msg
+
+    const res = await fetch("/chat", {       // call api
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -31,7 +65,7 @@ async function sendMessage() {
 
     const data = await res.json(); // res is the http response object, over here we are extracting the json, which is done like this
 
-    document.getElementById("response").innerText = data.response;
+    document.getElementById("response").innerText = data.response; // puts the respones in the response area, defined in line 15
 }
 </script>
 
