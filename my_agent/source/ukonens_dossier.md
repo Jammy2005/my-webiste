@@ -1,4 +1,4 @@
-# Project Dossier: ukon_project (Ukkonen suffix-tree matcher)
+# Project: ukon_project (Ukkonen suffix-tree matcher)
 
 ## 1. One-Sentence Summary
 A Python command-line program that builds a generalized suffix tree over multiple input texts (using an Ukkonen-style incremental construction) and reports exact and single-edit approximate pattern matches per text.

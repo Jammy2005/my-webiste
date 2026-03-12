@@ -1,4 +1,4 @@
-# Project Dossier: e-commerce-agent
+# Project: e-commerce-agent
 
 ## 1. One-Sentence Summary
 

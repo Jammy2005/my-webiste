@@ -1,4 +1,4 @@
-# Project Dossier: Ambient Email Agent
+# Project: Ambient Email Agent
 
 ## 1. One-Sentence Summary
 

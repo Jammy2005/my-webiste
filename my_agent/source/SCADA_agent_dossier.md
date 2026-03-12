@@ -1,4 +1,4 @@
-# Project Dossier: Scada Virtual Agent
+# Project: Scada Virtual Agent
 
 ## 1. One-Sentence Summary
 

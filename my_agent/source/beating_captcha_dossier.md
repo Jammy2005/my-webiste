@@ -1,4 +1,4 @@
-# Project Dossier: Beating Captchas with TensorFlow OCR
+# Project: Beating Captchas with TensorFlow OCR
 
 ## 1. One-Sentence Summary
 

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FastAPI Chat</title>
+</head>
+<body>
+
+<h2>Minimal Chat</h2>
+
+<input id="messageInput" placeholder="Type a message" />
+<button onclick="sendMessage()">Send</button>
+
+<p id="response"></p>
+
+<script>
+async function sendMessage() {
+    const message = document.getElementById("messageInput").value;
+
+    const res = await fetch("http://localhost:8000/chat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            message: message
+        })
+    });
+
+    console.log("BELOW THIS LINE IM PRINTING RES")
+    console.log(typeof res)
+
+    const data = await res.json(); // res is the http response object, over here we are extracting the json, which is done like this
+
+    document.getElementById("response").innerText = data.response;
+}
+</script>
+
+</body>
+</html>
