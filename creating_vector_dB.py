@@ -3,12 +3,13 @@
 # Purpose:
 #   1. Load your markdown files
 #   2. Split them into chunks
-#   3. Embed those chunks
-#   4. Store them in a persistent Chroma vector database
-#   5. Run a quick retrieval test
+#   3. Enrich chunk text with project/section context
+#   4. Embed those chunks
+#   5. Store them in a persistent Chroma vector database
+#   6. Run a quick retrieval test
 #
 # Install:
-#   pip install -U langchain langchain-core langchain-text-splitters langchain-openai langchain-chroma
+#   pip install -U langchain langchain-core langchain-text-splitters langchain-openai langchain-chroma python-dotenv
 #
 # Environment:
 #   export OPENAI_API_KEY="your_key_here"
@@ -27,6 +28,7 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # ------------------------------------------------------------
@@ -34,8 +36,8 @@ load_dotenv()
 # ------------------------------------------------------------
 # Resolve everything relative to this file so deployment is safer.
 BASE_DIR = Path(__file__).resolve().parent
-DOCS_DIR = BASE_DIR / "my_agent" / "source"        # folder containing your .md files
-CHROMA_DIR = BASE_DIR / "chroma_db"                # where Chroma will persist data locally
+DOCS_DIR = BASE_DIR / "my_agent" / "source"   # folder containing your .md files
+CHROMA_DIR = BASE_DIR / "chroma_db"           # where Chroma will persist data locally
 
 
 # ------------------------------------------------------------
@@ -60,8 +62,8 @@ markdown_splitter = MarkdownHeaderTextSplitter(
 
 # Secondary splitter for sections that are too long.
 recursive_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1800,
-    chunk_overlap=200,
+    chunk_size=1200,
+    chunk_overlap=150,
     separators=["\n\n", "\n", ". ", " ", ""],
 )
 
@@ -77,10 +79,19 @@ def clean_project_title(title: str | None) -> str | None:
     """
     if not title:
         return title
-    prefix = "Project Dossier:"
-    if title.startswith(prefix):
-        return title[len(prefix):].strip()
-    return title.strip()
+
+    title = title.strip()
+
+    prefixes = [
+        "Project Dossier:",
+        "Project:",
+    ]
+
+    for prefix in prefixes:
+        if title.startswith(prefix):
+            return title[len(prefix):].strip()
+
+    return title
 
 
 def clean_section_title(title: str | None) -> str | None:
@@ -92,12 +103,51 @@ def clean_section_title(title: str | None) -> str | None:
     if not title:
         return title
 
-    # Split once on the first ". " pattern if it looks like "2. Something"
+    title = title.strip()
+
     parts = title.split(". ", 1)
     if len(parts) == 2 and parts[0].isdigit():
         return parts[1].strip()
 
-    return title.strip()
+    return title
+
+
+def build_contextualized_chunk_text(
+    original_text: str,
+    project: str | None,
+    section: str | None,
+    file_name: str | None,
+) -> str:
+    """
+    Build richer chunk text so embeddings include document context.
+
+    Example output:
+
+        Project: Scada Virtual Agent
+        Section: Tech Stack
+        File: SCADA_agent_dossier.md
+
+        ## 9. Tech Stack
+        - Python
+        - FastAPI
+        - LangGraph
+    """
+    prefix_lines = []
+
+    if project:
+        prefix_lines.append(f"Project: {project}")
+    if section:
+        prefix_lines.append(f"Section: {section}")
+    if file_name:
+        prefix_lines.append(f"File: {file_name}")
+
+    prefix = "\n".join(prefix_lines).strip()
+    body = original_text.strip()
+
+    if prefix:
+        return f"{prefix}\n\n{body}"
+
+    return body
 
 
 # ------------------------------------------------------------
@@ -126,12 +176,16 @@ def split_markdown_file(file_path: Path) -> List[Document]:
         metadata["file_name"] = file_path.name
         metadata["project_slug"] = file_path.stem
 
-        # Add a stable chunk source id before recursive splitting
+        # Add a stable header-level index before recursive splitting
         metadata["header_chunk_index"] = i
+
+        cleaned_text = doc.page_content.strip()
+        if not cleaned_text:
+            continue
 
         enriched_docs.append(
             Document(
-                page_content=doc.page_content,
+                page_content=cleaned_text,
                 metadata=metadata,
             )
         )
@@ -140,10 +194,26 @@ def split_markdown_file(file_path: Path) -> List[Document]:
     final_chunks = recursive_splitter.split_documents(enriched_docs)
 
     # Add a final per-file chunk index after recursive splitting
+    # and rewrite the chunk text so the embeddings include metadata context.
+    cleaned_final_chunks: List[Document] = []
+
     for j, chunk in enumerate(final_chunks):
+        chunk_text = chunk.page_content.strip()
+        if not chunk_text:
+            continue
+
         chunk.metadata["chunk_index"] = j
 
-    return final_chunks
+        chunk.page_content = build_contextualized_chunk_text(
+            original_text=chunk_text,
+            project=chunk.metadata.get("project"),
+            section=chunk.metadata.get("section"),
+            file_name=chunk.metadata.get("file_name"),
+        )
+
+        cleaned_final_chunks.append(chunk)
+
+    return cleaned_final_chunks
 
 
 # ------------------------------------------------------------
@@ -173,10 +243,10 @@ def load_all_chunks(docs_dir: Path) -> List[Document]:
 # ------------------------------------------------------------
 # 6. Build the embedding model
 # ------------------------------------------------------------
-# OpenAIEmbeddings is LangChain's wrapper for OpenAI embedding models.
-# You can swap this later if you want another provider.
-
 def build_embeddings() -> OpenAIEmbeddings:
+    """
+    Build the embeddings model.
+    """
     if not os.getenv("OPENAI_API_KEY"):
         raise EnvironmentError("OPENAI_API_KEY is not set.")
 
@@ -186,8 +256,10 @@ def build_embeddings() -> OpenAIEmbeddings:
 # ------------------------------------------------------------
 # 7. Build / open the Chroma vector store
 # ------------------------------------------------------------
-# Chroma can persist locally via persist_directory.
 def build_vector_store(embeddings: OpenAIEmbeddings) -> Chroma:
+    """
+    Build a persistent local Chroma vector store.
+    """
     return Chroma(
         collection_name="project_dossiers",
         embedding_function=embeddings,
@@ -200,12 +272,16 @@ def build_vector_store(embeddings: OpenAIEmbeddings) -> Chroma:
 # ------------------------------------------------------------
 def index_documents(vector_store: Chroma, chunks: List[Document]) -> None:
     """
-    Add split documents into the vector store.
+    Add split documents into the vector store with stable IDs.
     """
-    # If you re-run this script a lot during development,
-    # you may want to clear the collection first.
-    # Easiest option is to delete the chroma_db folder manually.
-    vector_store.add_documents(chunks)
+    ids = [
+        f"{chunk.metadata.get('project_slug', 'unknown')}::"
+        f"{chunk.metadata.get('header_chunk_index', 'x')}::"
+        f"{chunk.metadata.get('chunk_index', i)}"
+        for i, chunk in enumerate(chunks)
+    ]
+
+    vector_store.add_documents(documents=chunks, ids=ids)
 
 
 # ------------------------------------------------------------
@@ -241,7 +317,7 @@ if __name__ == "__main__":
     if CHROMA_DIR.exists():
         print("Removing existing Chroma DB...")
         shutil.rmtree(CHROMA_DIR)
-    
+
     embeddings = build_embeddings()
     vector_store = build_vector_store(embeddings)
 
