@@ -1,73 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>FastAPI Chat</title>
+  <title>Chat</title>
+  <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
 
-<h2>WILL THE CI/CD PIPELINE WORK?</h2>
+<h2>Chat</h2>
 
 <div id="chatBox"></div>
 
 <input id="messageInput" placeholder="Type a message" />
-<button onclick="sendAndDisplay()">Send</button>
+<button onclick="sendMessage()">Send</button>
 
-<p id="response" style="display:none;"></p>
-
-<script>
-async function sendAndDisplay() {
-    // this function intakes the message the user sent, displays it, then gets he response and displays it
-
-
-    const messageInput = document.getElementById("messageInput");
-    const message = messageInput.value;
-    const chatBox = document.getElementById("chatBox");
-
-    const userMessage = document.createElement("p");
-    userMessage.innerText = "You: " + message;
-    chatBox.appendChild(userMessage);
-
-    console.log("We just wrote the user messge to the screen, we are now going into send message")
-
-    await sendMessage();
-
-    console.log("after sendMessage ends")
-
-
-    const botReplyText = document.getElementById("response").innerText;
-
-    const botMessage = document.createElement("p");
-    botMessage.innerText = botReplyText;
-    chatBox.appendChild(botMessage);
-
-    messageInput.value = "";
-}
-
-async function sendMessage() {
-    // this function call the backend api and gets the result a
-
-     console.log("before send message starts")
-
-    const message = document.getElementById("messageInput").value; // get user msg
-
-    const res = await fetch("/chat", {       // call api
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            message: message
-        })
-    });
-
-    console.log("BELOW THIS LINE IM PRINTING RES")
-    console.log(typeof res)
-
-    const data = await res.json(); // res is the http response object, over here we are extracting the json, which is done like this
-
-    document.getElementById("response").innerText = data.response; // puts the respones in the response area, defined in line 15
-}
-</script>
+<script src="/static/script.js"></script>
 
 </body>
 </html>

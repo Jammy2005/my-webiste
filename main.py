@@ -1,10 +1,16 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from my_agent.agent import agent
-from fastapi.responses import FileResponse
+# from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
 # Enable CORS (important if you have a frontend)
 app.add_middleware(
@@ -20,9 +26,9 @@ class MessageRequest(BaseModel):
     message: str
 
 # Root route
-@app.get("/")
-async def serve_frontend():
-    return FileResponse("index.html")
+@app.get("/", response_class=HTMLResponse)
+async def serve_frontend(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 
