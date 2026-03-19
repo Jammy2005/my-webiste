@@ -16,4 +16,6 @@ I also want some tool calling capacity. Will work on that once the simple chatbo
 
 1. fix the problem with aggregation queries (i.e which projects use langgraph? if not enough chunks retrieved it could fail)
 
-2. fix the vector dB being used, rn i am using chromaDb in memeory not saving to disk, super bad, figure out what works better in prod
+2. fix the vector dB being used, rn i am using chromaDb in memeory not saving to disk, super bad, figure out what works better in prod [SOLVED]
+
+3. implement streaming

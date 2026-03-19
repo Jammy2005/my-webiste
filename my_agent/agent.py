@@ -55,7 +55,7 @@ def search_project_docs(query: str) -> str:
     """
 
 
-    results = vector_store.similarity_search(query, k=4)
+    results = vector_store.similarity_search(query, k=7)
 
     if not results:
         return "No relevant documents found."
