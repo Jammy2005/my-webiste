@@ -326,6 +326,12 @@ if __name__ == "__main__":
     print("Done indexing.")
 
     # Run a few test searches to sanity-check retrieval
-    test_retrieval(vector_store, "What is the tech stack of the SCADA project?")
-    test_retrieval(vector_store, "Which projects use LangGraph?")
+    # test_retrieval(vector_store, "What is the tech stack of the SCADA project?")
+    # test_retrieval(vector_store, "Which projects use LangGraph?")
+    # test_retrieval(vector_store, "What are the limitations of the e-commerce agent?")
     test_retrieval(vector_store, "What are the limitations of the e-commerce agent?")
+
+    if CHROMA_DIR.exists():
+        print("Exists")
+    else:
+        print("Does not exist")
