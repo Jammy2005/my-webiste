@@ -15,6 +15,7 @@
 
 from pathlib import Path
 from typing import List
+import shutil
 import os
 
 from langchain_core.documents import Document
@@ -237,6 +238,10 @@ if __name__ == "__main__":
     chunks = load_all_chunks(DOCS_DIR)
     print(f"Total chunks loaded: {len(chunks)}")
 
+    if CHROMA_DIR.exists():
+        print("Removing existing Chroma DB...")
+        shutil.rmtree(CHROMA_DIR)
+    
     embeddings = build_embeddings()
     vector_store = build_vector_store(embeddings)
 
