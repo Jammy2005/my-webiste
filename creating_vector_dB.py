@@ -287,7 +287,7 @@ def index_documents(vector_store: Chroma, chunks: List[Document]) -> None:
 # ------------------------------------------------------------
 # 9. Quick retrieval test
 # ------------------------------------------------------------
-def test_retrieval(vector_store: Chroma, query: str, k: int = 4) -> None:
+def test_retrieval(vector_store: Chroma, query: str, k: int = 8) -> None: # increased k
     """
     Run a similarity search and print the top results.
     """
