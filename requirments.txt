@@ -8,6 +8,7 @@ anyio==4.12.1
 attrs==25.4.0
 bcrypt==5.0.0
 beautifulsoup4==4.14.3
+blockbuster==1.5.26
 Bottleneck==1.6.0
 bs4==0.0.2
 build==1.4.0
@@ -17,6 +18,8 @@ charset-normalizer==3.4.5
 chromadb==1.5.5
 claude-agent-sdk==0.1.48
 click==8.3.1
+cloudpickle==3.1.2
+croniter==6.2.2
 cryptography==46.0.5
 dataclasses-json==0.6.7
 distro==1.9.0
@@ -26,6 +29,7 @@ durationpy==0.10
 fastapi==0.135.1
 filelock==3.25.1
 flatbuffers==25.12.19
+forbiddenfruit==0.1.4
 frozenlist==1.8.0
 fsspec==2026.2.0
 google-api-core==2.30.0
@@ -42,7 +46,9 @@ google-resumable-media==2.8.0
 googleapis-common-protos==1.73.0
 grpc-google-iam-v1==0.14.3
 grpcio==1.78.0
+grpcio-health-checking==1.78.0
 grpcio-status==1.78.0
+grpcio-tools==1.78.0
 h11==0.16.0
 hf-xet==1.3.2
 httpcore==1.0.9
@@ -54,11 +60,13 @@ idna==3.11
 importlib_metadata==8.7.1
 importlib_resources==6.5.2
 iniconfig==2.3.0
+Jinja2==3.1.6
 jiter==0.13.0
 jsonpatch==1.33
 jsonpointer==3.0.0
 jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
+jsonschema_rs==0.44.1
 kubernetes==35.0.0
 langchain==1.2.10
 langchain-anthropic==1.3.4
@@ -71,11 +79,15 @@ langchain-openai==1.1.10
 langchain-tests==1.1.5
 langchain-text-splitters==1.1.1
 langgraph==1.0.10
+langgraph-api==0.7.80
 langgraph-checkpoint==4.0.1
+langgraph-cli==0.4.18
 langgraph-prebuilt==1.0.8
+langgraph-runtime-inmem==0.26.0
 langgraph-sdk==0.3.9
 langsmith==0.7.14
 markdown-it-py==4.0.0
+MarkupSafe==3.0.3
 marshmallow==3.26.2
 mcp==1.26.0
 mdurl==0.1.2
@@ -91,6 +103,7 @@ openai==2.26.0
 opentelemetry-api==1.40.0
 opentelemetry-exporter-otlp-proto-common==1.40.0
 opentelemetry-exporter-otlp-proto-grpc==1.40.0
+opentelemetry-exporter-otlp-proto-http==1.40.0
 opentelemetry-proto==1.40.0
 opentelemetry-sdk==1.40.0
 opentelemetry-semantic-conventions==0.61b0
@@ -140,12 +153,14 @@ soupsieve==2.8.3
 SQLAlchemy==2.0.48
 sse-starlette==3.3.2
 starlette==0.52.1
+structlog==25.5.0
 sympy==1.14.0
 syrupy==5.1.0
 tenacity==9.1.4
 tiktoken==0.12.0
 tokenizers==0.22.2
 tqdm==4.67.3
+truststore==0.10.4
 typer==0.24.1
 typing-inspect==0.9.0
 typing-inspection==0.4.2
